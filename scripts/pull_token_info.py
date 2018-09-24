@@ -7,8 +7,9 @@ import json
 
 class TokenInfoProvider(object):
 
-    def __init__(self, token_img_base):
+    def __init__(self, token_info_path, token_img_base):
         self.tokens = []
+        self.token_info_path = token_info_path
         self.token_img_base = token_img_base
 
     def download_file(self, url, taget_folder, local_filename):
@@ -49,7 +50,7 @@ class TokenInfoProvider(object):
             token_address = to_checksum_address(link[7:])
             print(token_address)
             desc = element.xpath('td/small/font/text()')
-            self.download_file("https://raw.githubusercontent.com/TrustWallet/tokens/master/images/" + token_address.lower() + ".png", os.path.join("..", "tokens", "mainnet", "icons"), token_address + ".png")
+            self.download_file("https://raw.githubusercontent.com/TrustWallet/tokens/master/images/" + token_address.lower() + ".png", os.path.join(self.token_info_path, "icons"), token_address + ".png")
             token_request = requests.get("https://raw.githubusercontent.com/ethereum-lists/tokens/master/tokens/eth/" + token_address + ".json")
             data = None
             if token_request.status_code == 200:
@@ -92,8 +93,8 @@ class TokenInfoProvider(object):
             ]
         }
 
-        with open('tokens.json', 'w') as outfile:
+        with open(os.path.join(self.token_info_path, 'tokens.json'), 'w') as outfile:
             json.dump(data, outfile, sort_keys=True, indent=4, separators=(',', ': '))      
 
 if __name__ == "__main__":
-    TokenInfoProvider("https://raw.githubusercontent.com/rmeissner/crypto_resources/master/tokens/mainnet/icons/").write_tokens(2)
+    TokenInfoProvider(os.path.join("..", "tokens", "mainnet"), "https://raw.githubusercontent.com/rmeissner/crypto_resources/master/tokens/mainnet/icons/").write_tokens(2)
