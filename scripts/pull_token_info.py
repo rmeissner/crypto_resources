@@ -18,7 +18,6 @@ class TokenInfoProvider(object):
         if r.status_code != 200:
             print ("Image not found")
             return
-        print(os.path.join(taget_folder, local_filename))
         with open(os.path.join(taget_folder, local_filename), 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024): 
                 if chunk:
